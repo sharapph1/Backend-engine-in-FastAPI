@@ -8,3 +8,4 @@ phases.md
 wireframes.md
 __pycache__
 alembic/__pycache__/ 
+alembic/
