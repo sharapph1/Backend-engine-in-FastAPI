@@ -1,0 +1,10 @@
+.env
+venv/
+alembic.ini
+commands.txt
+validation_client
+confidential.md
+phases.md
+wireframes.md
+__pycache__
+alembic/__pycache__/ 

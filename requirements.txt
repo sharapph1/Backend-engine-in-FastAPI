@@ -1,0 +1,3 @@
+pip install fastapi uvicorn sqlalchemy psycopg2-binary alembic python-dotenv pydantic-settings python-jose[cryptography] argon2-cffi python-multipart aiosmtplib
+
+pip install sqlalchemy psycopg2-binary alembic passlib[argon2] python-jose[cryptography] aiosmtplib
