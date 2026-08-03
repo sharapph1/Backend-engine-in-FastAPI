@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, DateTime, String, Integer
+from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -27,13 +27,6 @@ class Game(Base):
         nullable=False
     )
 
-    # New fields added per refactor
-    thumbnail_url: Mapped[str | None] = mapped_column(String, nullable=True)
-    is_latest: Mapped[bool] = mapped_column(Boolean, default=False)
-    likes_count: Mapped[int] = mapped_column(Integer, default=0)
-    plays_count: Mapped[int] = mapped_column(Integer, default=0)
-    added_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         default=True
@@ -43,4 +36,21 @@ class Game(Base):
         DateTime,
         default=datetime.utcnow
     )
-
+
+    gameplays = relationship(
+        "GamePlay",
+        back_populates="game",
+        cascade="all, delete-orphan"
+    )
+
+    likes = relationship(
+        "GameLike",
+        back_populates="game",
+        cascade="all, delete-orphan"
+    )
+
+    pins = relationship(
+        "GamePin",
+        back_populates="game",
+        cascade="all, delete-orphan"
+    )
