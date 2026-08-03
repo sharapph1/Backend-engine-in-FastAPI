@@ -7,7 +7,7 @@ import sqlalchemy as sa
 revision = "202308040001_add_game_count_columns"
 # Use the most recent existing revision as down_revision
 # Adjust if the actual latest revision ID differs
- down_revision = "95e709d0d272"
+down_revision = "95e709d0d272"
 branch_labels = None
 depends_on = None
 
