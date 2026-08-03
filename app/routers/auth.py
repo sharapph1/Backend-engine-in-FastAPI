@@ -36,15 +36,14 @@ async def register(
 
 @router.post(
     "/verify-otp",
-    response_model=MessageResponse,
+    response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
 )
 async def verify_otp(
     data: VerifyOTP,
     db: Session = Depends(get_db),
 ):
-    message = await AuthService.verify_user_otp(db=db, data=data)
-    return MessageResponse(message=message)
+    return await AuthService.verify_user_otp(db=db, data=data)
 
 
 @router.post(

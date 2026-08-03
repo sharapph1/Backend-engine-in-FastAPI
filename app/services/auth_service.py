@@ -70,7 +70,7 @@ class AuthService:
     async def verify_user_otp(
         db: Session,
         data: VerifyOTP,
-    ) -> str:
+    ) -> TokenResponse:
         user = db.query(User).filter(User.email == data.email).first()
         if not user:
             raise HTTPException(
@@ -78,22 +78,36 @@ class AuthService:
                 detail="User not found.",
             )
 
-        if user.is_verified:
-            return "User email is already verified."
-
-        success, message = await OTPService.verify_otp(
-            db=db,
-            user=user,
-            entered_otp=data.otp,
-        )
-
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=message,
+        # If already verified, just issue tokens directly
+        if not user.is_verified:
+            success, message = await OTPService.verify_otp(
+                db=db,
+                user=user,
+                entered_otp=data.otp,
             )
 
-        return message
+            if not success:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=message,
+                )
+
+        # Issue tokens after successful verification
+        access_token = create_access_token(subject=user.id)
+        refresh_token = create_refresh_token(subject=user.id)
+
+        session_record = UserSession(
+            user_id=user.id,
+            refresh_token_hash=hash_password(refresh_token),
+        )
+        db.add(session_record)
+        db.commit()
+
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+        )
 
     @staticmethod
     async def resend_user_otp(

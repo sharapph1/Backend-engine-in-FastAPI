@@ -3,7 +3,7 @@ from uuid import uuid4
 from typing import Optional
 
 from sqlalchemy import Boolean, DateTime, String, Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
 
@@ -44,22 +44,4 @@ class Game(Base):
     likes_count: Mapped[int] = mapped_column(Integer, default=0)
     plays_count: Mapped[int] = mapped_column(Integer, default=0)
     added_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
-    # Legacy relationships (kept for backward compatibility)
-    gameplays = relationship(
-        "GamePlay",
-        back_populates="game",
-        cascade="all, delete-orphan"
-    )
-
-    likes = relationship(
-        "GameLike",
-        back_populates="game",
-        cascade="all, delete-orphan"
-    )
-
-    pins = relationship(
-        "GamePin",
-        back_populates="game",
-        cascade="all, delete-orphan"
-    )
+

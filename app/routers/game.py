@@ -1,8 +1,10 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_optional_user
 from app.models.user import User
 from app.schemas.game import GameActionResponse, GameCreate, GameResponse
 from app.services.game_service import GameService
@@ -21,7 +23,7 @@ router = APIRouter(
 async def create_game(
     data: GameCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),  # admin-only in future; auth required for now
 ):
     return await GameService.create_game(db=db, data=data)
 
@@ -33,7 +35,7 @@ async def create_game(
 )
 async def list_games(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),  # public endpoint
 ):
     return await GameService.get_games(db=db, user=current_user)
 
@@ -46,11 +48,9 @@ async def list_games(
 async def get_game(
     game_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),  # public endpoint
 ):
-    return await GameService.get_game_by_id(
-        db=db, game_id=game_id, user=current_user
-    )
+    return await GameService.get_game_by_id(db=db, game_id=game_id, user=current_user)
 
 
 @router.post(
@@ -58,29 +58,12 @@ async def get_game(
     response_model=GameActionResponse,
     status_code=status.HTTP_200_OK,
 )
-async def toggle_like(
+async def like_game(
     game_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),  # must be logged in to like
 ):
-    return await GameService.toggle_like_game(
-        db=db, game_id=game_id, user=current_user
-    )
-
-
-@router.post(
-    "/{game_id}/pin",
-    response_model=GameActionResponse,
-    status_code=status.HTTP_200_OK,
-)
-async def toggle_pin(
-    game_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    return await GameService.toggle_pin_game(
-        db=db, game_id=game_id, user=current_user
-    )
+    return await GameService.like_game(db=db, game_id=game_id)
 
 
 @router.post(
@@ -91,8 +74,6 @@ async def toggle_pin(
 async def record_play(
     game_id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_user),  # record plays even for guests
 ):
-    return await GameService.record_gameplay(
-        db=db, game_id=game_id, user=current_user
-    )
+    return await GameService.record_gameplay(db=db, game_id=game_id)
