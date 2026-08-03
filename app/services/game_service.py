@@ -6,6 +6,7 @@ from app.models.gamelike import GameLike
 from app.models.gamepin import GamePin
 from app.models.gameplay import GamePlay
 from app.models.user import User
+from app.models.gamereview import GameReview
 from app.schemas.game import GameActionResponse, GameCreate, GameResponse
 
 
@@ -47,30 +48,16 @@ class GameService:
 
         results = []
         for g in games:
-            likes_count = db.query(GameLike).filter(GameLike.game_id == g.id).count()
-            pins_count = db.query(GamePin).filter(GamePin.game_id == g.id).count()
-            plays_count = db.query(GamePlay).filter(GamePlay.game_id == g.id).count()
-
-            is_liked = False
-            is_pinned = False
-            if user:
-                is_liked = db.query(GameLike).filter(
-                    GameLike.game_id == g.id, GameLike.user_id == user.id
-                ).first() is not None
-                is_pinned = db.query(GamePin).filter(
-                    GamePin.game_id == g.id, GamePin.user_id == user.id
-                ).first() is not None
-
             results.append(
                 GameResponse(
                     id=g.id,
                     title=g.title,
                     url=g.url,
-                    likes_count=likes_count,
-                    pins_count=pins_count,
-                    plays_count=plays_count,
-                    is_liked=is_liked,
-                    is_pinned=is_pinned,
+                    likes_count=g.likes_count,
+                    pins_count=g.pins_count,
+                    plays_count=g.plays_count,
+                    is_liked=db.query(GameLike).filter(GameLike.game_id == g.id, GameLike.user_id == user.id).first() is not None if user else False,
+                    is_pinned=db.query(GamePin).filter(GamePin.game_id == g.id, GamePin.user_id == user.id).first() is not None if user else False,
                     created_at=g.created_at,
                 )
             )
@@ -86,29 +73,15 @@ class GameService:
                 detail="Game not found.",
             )
 
-        likes_count = db.query(GameLike).filter(GameLike.game_id == g.id).count()
-        pins_count = db.query(GamePin).filter(GamePin.game_id == g.id).count()
-        plays_count = db.query(GamePlay).filter(GamePlay.game_id == g.id).count()
-
-        is_liked = False
-        is_pinned = False
-        if user:
-            is_liked = db.query(GameLike).filter(
-                GameLike.game_id == g.id, GameLike.user_id == user.id
-            ).first() is not None
-            is_pinned = db.query(GamePin).filter(
-                GamePin.game_id == g.id, GamePin.user_id == user.id
-            ).first() is not None
-
         return GameResponse(
             id=g.id,
             title=g.title,
             url=g.url,
-            likes_count=likes_count,
-            pins_count=pins_count,
-            plays_count=plays_count,
-            is_liked=is_liked,
-            is_pinned=is_pinned,
+            likes_count=g.likes_count,
+            pins_count=g.pins_count,
+            plays_count=g.plays_count,
+            is_liked=db.query(GameLike).filter(GameLike.game_id == g.id, GameLike.user_id == user.id).first() is not None if user else False,
+            is_pinned=db.query(GamePin).filter(GamePin.game_id == g.id, GamePin.user_id == user.id).first() is not None if user else False,
             created_at=g.created_at,
         )
 
@@ -124,11 +97,13 @@ class GameService:
 
         if existing:
             db.delete(existing)
+            game.likes_count -= 1
             db.commit()
             return GameActionResponse(message="Unliked game.", active=False)
 
         new_like = GameLike(game_id=game_id, user_id=user.id)
         db.add(new_like)
+        game.likes_count += 1
         db.commit()
         return GameActionResponse(message="Liked game.", active=True)
 

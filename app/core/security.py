@@ -110,3 +110,25 @@ async def get_current_user(
         )
 
     return user
+
+# Optional authentication: returns None if no valid token is provided
+async def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    if not credentials:
+        return None
+    token = credentials.credentials
+    try:
+        payload = decode_token(token)
+    except ValueError:
+        return None
+    if payload.get("type") != "access":
+        return None
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user or not user.is_active:
+        return None
+    return user
