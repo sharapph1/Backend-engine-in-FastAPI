@@ -5,7 +5,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "202308040002_migrate_game_counts"
- down_revision = "202308040001_add_game_count_columns"
+down_revision = "202308040001_add_game_count_columns"
 branch_labels = None
 depends_on = None
 
