@@ -3,7 +3,8 @@
  * Senior Integration & QA Client Engine
  */
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+const API_BASE_URL = 'http://10.170.204.130:8000/api/v1';
+const API_HOST = "http://10.170.204.130:8000";
 
 // Client State
 const state = {
@@ -169,7 +170,7 @@ async function autoRefreshToken() {
 // Check Backend API Health
 async function checkApiHealth() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/');
+    const res = await fetch('http://10.170.204.130:8000');
     if (res.ok) {
       elements.apiStatusBadge.querySelector('.status-dot').className = 'status-dot green';
       elements.apiStatusText.textContent = 'API Connected (Online)';

@@ -10,3 +10,4 @@ python-jose[cryptography]
 pwdlib[argon2]
 python-multipart
 aiosmtplib
+email-validator
