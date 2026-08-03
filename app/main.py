@@ -1,10 +1,14 @@
+# app/main.py
 from fastapi import FastAPI
-
-from app.core.config import settings
-from app.routers import auth, daily_usage, game, referral, streak
-
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.models import *  # Imports all model files from your models folder
+from app.routers import auth, daily_usage, game, referral, streak
+
+# <--- Create all database tables in Supabase automatically on startup
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.APP_NAME
