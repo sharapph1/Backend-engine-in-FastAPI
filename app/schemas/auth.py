@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -38,6 +39,8 @@ class UserResponse(BaseModel):
     email: EmailStr
     is_verified: bool
     is_active: bool
+    refer_id: Optional[str] = None
+    avatar_url: Optional[str] = None
     created_at: datetime
 
     class Config:

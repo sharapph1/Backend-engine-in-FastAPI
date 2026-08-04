@@ -5,5 +5,6 @@ validation_client
 confidential.md
 phases.md
 wireframes.md
-__pycache__
-alembic/__pycache__/
+**/__pycache__/
+**/*.pyc
+**/*.pyo

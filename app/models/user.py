@@ -105,24 +105,6 @@ class User(Base):
         back_populates="referred"
     )
 
-    gameplays = relationship(
-        "GamePlay",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
-
-    likes = relationship(
-        "GameLike",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
-
-    pins = relationship(
-        "GamePin",
-        back_populates="user",
-        cascade="all, delete-orphan"
-    )
-
     daily_usage = relationship(
         "DailyUsage",
         back_populates="user",
