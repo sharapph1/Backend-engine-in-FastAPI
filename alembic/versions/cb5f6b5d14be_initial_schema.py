@@ -1,8 +1,8 @@
-"""Initial schema
+"""initial schema
 
-Revision ID: 2a2cb1cc3048
+Revision ID: cb5f6b5d14be
 Revises: 
-Create Date: 2026-07-26 23:06:51.522397
+Create Date: 2026-08-04 23:29:37.863238
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2a2cb1cc3048'
+revision: str = 'cb5f6b5d14be'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,11 @@ def upgrade() -> None:
     sa.Column('url', sa.String(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('thumbnail_url', sa.String(), nullable=True),
+    sa.Column('is_latest', sa.Boolean(), nullable=False),
+    sa.Column('likes_count', sa.Integer(), nullable=False),
+    sa.Column('plays_count', sa.Integer(), nullable=False),
+    sa.Column('added_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('url')
     )
@@ -58,35 +63,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('gamelikes',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('user_id', sa.String(length=36), nullable=False),
-    sa.Column('game_id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['game_id'], ['games.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'game_id')
-    )
-    op.create_table('gamepins',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('user_id', sa.String(length=36), nullable=False),
-    sa.Column('game_id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['game_id'], ['games.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'game_id')
-    )
-    op.create_table('gameplays',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('user_id', sa.String(length=36), nullable=False),
-    sa.Column('game_id', sa.String(length=36), nullable=False),
-    sa.Column('played_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['game_id'], ['games.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('otps',
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('user_id', sa.String(length=36), nullable=False),
@@ -94,6 +70,8 @@ def upgrade() -> None:
     sa.Column('purpose', sa.String(length=30), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('expires_at', sa.DateTime(), nullable=False),
+    sa.Column('attempts', sa.Integer(), nullable=False),
+    sa.Column('is_used', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -136,9 +114,6 @@ def downgrade() -> None:
     op.drop_table('sessions')
     op.drop_table('referrals')
     op.drop_table('otps')
-    op.drop_table('gameplays')
-    op.drop_table('gamepins')
-    op.drop_table('gamelikes')
     op.drop_table('daily_usage')
     op.drop_index(op.f('ix_users_username'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')
