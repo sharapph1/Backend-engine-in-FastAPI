@@ -11,3 +11,7 @@ pwdlib[argon2]
 python-multipart
 aiosmtplib
 email-validator
+# Avatar storage (Cloudflare R2 via S3-compatible API)
+boto3
+# Image processing (resize, crop, WebP encoding)
+Pillow
