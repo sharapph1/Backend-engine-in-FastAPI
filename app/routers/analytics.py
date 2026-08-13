@@ -17,13 +17,12 @@ router = APIRouter(
     "/event",
     response_model=AnalyticsEventResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Log an analytics event",
+    summary="Log analytics event",
+    description="Logs a user interaction event (game open, screen time, location). Fire-and-forget from the client.",
 )
 async def log_event(
     data: AnalyticsEventCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await AnalyticsService.log_event(
-        db=db, user=current_user, data=data
-    )
+    return await AnalyticsService.log_event(db=db, user=current_user, data=data)

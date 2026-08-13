@@ -26,6 +26,7 @@ from app.schemas.auth import (
 from app.services.otp_service import OTPService
 
 
+
 def _gen_refer_id() -> str:
     """Generate a random 8-character uppercase alphanumeric referral ID."""
     chars = string.ascii_uppercase + string.digits
@@ -70,21 +71,23 @@ class AuthService:
         db.refresh(user)
 
         if not user.refer_id:
-            user.refer_id = _gen_refer_id()
+            from app.services.referral_service import ReferralService as _RS
+            user.refer_id = _RS.generate_refer_id()
             db.commit()
             db.refresh(user)
 
-        if data.referral_code:
-            from app.services.referral_service import ReferralService
-            from app.schemas.referral import ReferralClaimRequest
+        # Auto-claim referral if code was provided
+        if data.referral_code and data.referral_code.strip():
             try:
-                await ReferralService.claim_referral(
+                from app.schemas.referral import ReferralClaimRequest as _RCR
+                from app.services.referral_service import ReferralService as _RS
+                await _RS.claim_referral(
                     db=db,
                     user=user,
-                    data=ReferralClaimRequest(referral_code=data.referral_code),
+                    data=_RCR(referral_code=data.referral_code.strip()),
                 )
             except Exception:
-                pass  # Silently ignore invalid codes — don't break registration
+                pass  # Never fail registration because of a bad referral code
 
         await OTPService.create_otp(db=db, user=user)
 

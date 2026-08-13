@@ -9,7 +9,3 @@ class WalletResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class WalletCreditRequest(BaseModel):
-    amount: int  # coins to add

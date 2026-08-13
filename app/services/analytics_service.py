@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from app.models.analytics_event import AnalyticsEvent
 from app.models.user import User
 from app.schemas.analytics import AnalyticsEventCreate, AnalyticsEventResponse

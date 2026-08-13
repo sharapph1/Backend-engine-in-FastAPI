@@ -12,15 +12,16 @@ router = APIRouter(
     tags=["Wallet"],
 )
 
+
 @router.get(
     "/me",
     response_model=WalletResponse,
     status_code=status.HTTP_200_OK,
-    summary="Get my wallet balance",
-    description="Fetch the current user's wallet balance.",
+    summary="Get my wallet",
+    description="Returns the authenticated user's coin balance. Creates the wallet automatically if it doesn't exist yet.",
 )
 async def get_my_wallet(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return WalletService.get_balance(db=db, user=current_user)
+    return await WalletService.get_wallet(db=db, user=current_user)

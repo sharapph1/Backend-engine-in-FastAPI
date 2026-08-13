@@ -1,9 +1,12 @@
 from datetime import datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+
 from app.models.user import User
 from app.models.wallet import UserWallet
 from app.schemas.wallet import WalletResponse
+
 
 class WalletService:
 
@@ -18,12 +21,16 @@ class WalletService:
         return wallet
 
     @staticmethod
-    def get_balance(db: Session, user: User) -> WalletResponse:
+    async def get_wallet(db: Session, user: User) -> WalletResponse:
         wallet = WalletService.get_or_create(db, user)
-        return WalletResponse.model_validate(wallet)
+        return WalletResponse(
+            user_id=wallet.user_id,
+            coins=wallet.coins,
+            updated_at=wallet.updated_at,
+        )
 
     @staticmethod
-    def credit(db: Session, user: User, amount: int) -> UserWallet:
+    async def credit(db: Session, user: User, amount: int) -> UserWallet:
         wallet = WalletService.get_or_create(db, user)
         wallet.coins += amount
         wallet.updated_at = datetime.utcnow()
@@ -32,12 +39,12 @@ class WalletService:
         return wallet
 
     @staticmethod
-    def deduct(db: Session, user: User, amount: int) -> UserWallet:
+    async def deduct(db: Session, user: User, amount: int) -> UserWallet:
         wallet = WalletService.get_or_create(db, user)
         if wallet.coins < amount:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Insufficient balance",
+                detail=f"Insufficient balance. You have {wallet.coins} coins.",
             )
         wallet.coins -= amount
         wallet.updated_at = datetime.utcnow()
