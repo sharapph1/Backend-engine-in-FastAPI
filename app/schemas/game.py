@@ -9,6 +9,8 @@ class GameCreate(BaseModel):
     url: str
     thumbnail_url: Optional[str] = None
     is_latest: bool = False
+    is_primary: bool = False
+    updated_at: Optional[datetime] = None
 
 
 class GameResponse(BaseModel):
@@ -21,6 +23,8 @@ class GameResponse(BaseModel):
     plays_count: int = 0
     is_liked: bool = False
     added_at: datetime
+    is_primary: bool = False
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

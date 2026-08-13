@@ -7,6 +7,7 @@ class UserRegister(BaseModel):
     username: str = Field(..., min_length=3, max_length=30)
     email: EmailStr
     password: str = Field(..., min_length=6)
+    referral_code: Optional[str] = None
 
 
 class VerifyOTP(BaseModel):

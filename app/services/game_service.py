@@ -23,6 +23,7 @@ class GameService:
             url=data.url,
             thumbnail_url=data.thumbnail_url,
             is_latest=data.is_latest,
+            is_primary=data.is_primary,
             is_active=True,
         )
         db.add(game)
@@ -39,6 +40,8 @@ class GameService:
             plays_count=game.plays_count,
             is_liked=False,
             added_at=game.added_at,
+            is_primary=game.is_primary,
+            updated_at=game.updated_at,
         )
 
     @staticmethod
@@ -58,6 +61,8 @@ class GameService:
                     plays_count=g.plays_count,
                     is_liked=False,  # no per-user like tracking in denormalized model
                     added_at=g.added_at,
+                    is_primary=g.is_primary,
+                    updated_at=g.updated_at,
                 )
             )
 
@@ -82,6 +87,8 @@ class GameService:
             plays_count=g.plays_count,
             is_liked=False,
             added_at=g.added_at,
+            is_primary=g.is_primary,
+            updated_at=g.updated_at,
         )
 
     @staticmethod

@@ -27,6 +27,9 @@ class Redemption(Base):
         nullable=False
     )
 
+    upi_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
     # Status: pending | approved | rejected | paid
     status: Mapped[str] = mapped_column(
         String(20),

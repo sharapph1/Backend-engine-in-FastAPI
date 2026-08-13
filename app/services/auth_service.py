@@ -1,3 +1,5 @@
+import secrets
+import string
 from datetime import datetime
 
 from fastapi import HTTPException, status
@@ -24,8 +26,13 @@ from app.schemas.auth import (
 from app.services.otp_service import OTPService
 
 
-class AuthService:
+def _gen_refer_id() -> str:
+    """Generate a random 8-character uppercase alphanumeric referral ID."""
+    chars = string.ascii_uppercase + string.digits
+    return "".join(secrets.choice(chars) for _ in range(8))
 
+
+class AuthService:
     @staticmethod
     async def register_user(
         db: Session,
@@ -61,6 +68,23 @@ class AuthService:
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        if not user.refer_id:
+            user.refer_id = _gen_refer_id()
+            db.commit()
+            db.refresh(user)
+
+        if data.referral_code:
+            from app.services.referral_service import ReferralService
+            from app.schemas.referral import ReferralClaimRequest
+            try:
+                await ReferralService.claim_referral(
+                    db=db,
+                    user=user,
+                    data=ReferralClaimRequest(referral_code=data.referral_code),
+                )
+            except Exception:
+                pass  # Silently ignore invalid codes — don't break registration
 
         await OTPService.create_otp(db=db, user=user)
 
