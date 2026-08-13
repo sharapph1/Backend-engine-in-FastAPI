@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "webx-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "fc9a6d5727be43faa851704cf366f235"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "webx-assets"
+    }
+  ],
+  "vars": {
+    "APP_NAME": "WebX API",
+    "ACCESS_TOKEN_EXPIRE_MINUTES": "60",
+    "REFRESH_TOKEN_EXPIRE_DAYS": "30",
+    "R2_PUBLIC_URL": "https://REPLACE_WITH_YOUR_PUBLIC_R2_DOMAIN"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

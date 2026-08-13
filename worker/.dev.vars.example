@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local development. Never commit the real file.
+JWT_SECRET_KEY=replace-with-the-existing-backend-jwt-secret
+BREVO_API_KEY=replace-with-a-brevo-v3-api-key
+BREVO_FROM_EMAIL=noreply@example.com

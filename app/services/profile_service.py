@@ -203,6 +203,28 @@ class ProfileService:
             avatar_url=versioned_url,
         )
 
+    @staticmethod
+    async def get_avatar_bytes(
+        db: Session,
+        current_user: User,
+    ) -> bytes:
+        """Fetch avatar bytes from R2 and return them (proxied to client)."""
+        if not current_user.avatar_url:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No avatar set.",
+            )
+        
+        object_key = _avatar_key(current_user.id)
+        try:
+            response = r2_client.get_object(Bucket=BUCKET, Key=object_key)
+            return response["Body"].read()
+        except (BotoCoreError, ClientError) as exc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Avatar not found in storage: {exc}",
+            )
+
     # ── Delete Avatar ─────────────────────────────────────────────────────────
 
     @staticmethod

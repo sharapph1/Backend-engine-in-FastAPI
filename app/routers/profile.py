@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, File, UploadFile, status
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -78,6 +79,24 @@ async def upload_avatar(
 ):
     return await ProfileService.upload_avatar(
         db=db, current_user=current_user, file=file
+    )
+
+
+@router.get(
+    "/avatar/me",
+    status_code=status.HTTP_200_OK,
+    summary="Get my avatar",
+    description="Fetch the current user's avatar image, proxied from R2 storage.",
+)
+async def get_my_avatar(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    image_bytes = await ProfileService.get_avatar_bytes(db=db, current_user=current_user)
+    return Response(
+        content=image_bytes,
+        media_type="image/webp",
+        headers={"Cache-Control": "private, max-age=300"},
     )
 
 
