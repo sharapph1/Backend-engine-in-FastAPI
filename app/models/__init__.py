@@ -5,3 +5,6 @@ from .streak import Streak
 from .referral import Referral
 from .game import Game
 from .daily_usage import DailyUsage
+from .wallet import UserWallet
+from .redemption import Redemption
+from .analytics_event import AnalyticsEvent
