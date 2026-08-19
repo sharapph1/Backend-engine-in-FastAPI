@@ -25,6 +25,8 @@ class RedemptionService:
         redemption = Redemption(
             user_id=user.id,
             coins=data.coins,
+            upi_id=data.upi_id,
+            full_name=data.full_name,
             status="pending",
         )
         db.add(redemption)
