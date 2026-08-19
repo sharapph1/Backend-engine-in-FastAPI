@@ -28,9 +28,9 @@ from app.services.otp_service import OTPService
 
 class AuthService:
 
-def _gen_refer_id() -> str:
-    chars = string.ascii_uppercase + string.digits
-    return "".join(secrets.choice(chars) for _ in range(8))
+    def _gen_refer_id() -> str:
+        chars = string.ascii_uppercase + string.digits
+        return "".join(secrets.choice(chars) for _ in range(8))
 
 
 class AuthService:
