@@ -26,9 +26,9 @@ from app.schemas.auth import (
 from app.services.otp_service import OTPService
 
 
+class AuthService:
 
 def _gen_refer_id() -> str:
-    """Generate a random 8-character uppercase alphanumeric referral ID."""
     chars = string.ascii_uppercase + string.digits
     return "".join(secrets.choice(chars) for _ in range(8))
 

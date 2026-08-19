@@ -33,33 +33,15 @@ class Game(Base):
         default=True
     )
 
-    # isPrimary from schema — marks the featured/hero game
-    is_primary: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False
-    )
-
-    is_latest: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False
-    )
-
-    thumbnail_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-
-    likes_count: Mapped[int] = mapped_column(Integer, default=0)
-    plays_count: Mapped[int] = mapped_column(Integer, default=0)
-
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
     )
 
-    # added_at kept for backward compat; updated_at matches schema image
+    # New consolidated fields
+    thumbnail_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    is_latest: Mapped[bool] = mapped_column(Boolean, default=False)
+    likes_count: Mapped[int] = mapped_column(Integer, default=0)
+    plays_count: Mapped[int] = mapped_column(Integer, default=0)
     added_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
 
