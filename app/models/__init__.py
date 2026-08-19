@@ -7,3 +7,4 @@ from .game import Game
 from .daily_usage import DailyUsage
 from .redemption import Redemption
 from .wallet import UserWallet
+from .analytics_event import AnalyticsEvent
